@@ -1,0 +1,100 @@
+# Regulatory sources to monitor for changes.
+# Add new sources here — no code changes needed for a basic HTML/text source.
+#
+# fields:
+#   id: short unique slug, used as the primary key in storage
+#   name: human-readable name
+#   url: page to fetch
+#   type: "html" | "pdf"
+#   selector: (html only) CSS selector scoping extraction to the real content
+#             region, cutting out nav/footer noise. Verify against the live
+#             page directly — don't assume a selector holds across pages
+#             even on the same site (see nist_csf note below for why).
+#   active: if false, this source is skipped entirely by the orchestrator.
+#             Kept in the file (rather than deleted) so past decisions and
+#             lessons learned stay documented.
+#   skip_classification: if true, the pipeline still detects and stores
+#             changes, but does NOT send diff text to the Claude API. Used
+#             for sources whose terms of use prohibit feeding content to
+#             AI/ML systems (see notes).
+#   notes: why this source matters / what it covers / any constraints
+
+sources:
+  - id: nist_ai_rmf
+    name: "NIST AI Risk Management Framework"
+    url: "https://www.nist.gov/itl/ai-risk-management-framework"
+    type: html
+    selector: ".nist-page__content"
+    active: true
+    skip_classification: false
+    notes: >
+      Core voluntary US framework for AI risk management. Frequently updated
+      with companion resources (Generative AI Profile / NIST AI 600-1,
+      playbook). Selector verified directly against live HTML: NIST's
+      #main-content is an empty skip-link anchor (Drupal accessibility
+      pattern), NOT the content container — .nist-page__content is the
+      actual article body/title wrapper here, confirmed by manual inspection
+      of element text lengths.
+
+  # --- Sources considered and deliberately excluded ---
+  # Project scope pivoted from "AI vs. non-AI baseline comparison" to
+  # "AI-specific standards only," which already dropped the NIST/ISO
+  # non-AI baselines below. ISO 42001, despite being AI-specific, was also
+  # excluded — see its note for why. All three are kept for the record
+  # rather than deleted, so the reasoning isn't lost, and so re-adding one
+  # later starts from documented context instead of from scratch.
+
+  - id: iso_42001
+    name: "ISO/IEC 42001:2023 (AI Management System)"
+    url: "https://www.iso.org/standard/42001"
+    type: html
+    selector: "#content"
+    active: false
+    skip_classification: true
+    notes: >
+      EXCLUDED: two independent signals pointed the same direction, so this
+      was dropped rather than worked around. (1) iso.org's site terms
+      explicitly prohibit using their content to train or prompt AI/ML
+      systems. (2) The site actively blocks automated requests with a
+      Cloudflare managed JS challenge (confirmed: 403 response, "Cf-Mitigated:
+      challenge" header, "Just a moment..." interstitial requiring JS
+      execution to pass) — not a simple header/User-Agent issue, a real
+      bot-detection wall. Between the written ToS and the technical
+      enforcement, building tooling to defeat the Cloudflare challenge would
+      be circumventing ISO's clearly stated intent, not just solving a
+      scraping inconvenience — so this source was dropped rather than
+      forced. If ISO 42001 tracking matters later, better approaches would
+      be: manual periodic review, or watching secondary sources (news
+      coverage, standards-body newsletters) that report on ISO changes
+      rather than scraping iso.org directly.
+
+  - id: nist_csf
+    name: "NIST Cybersecurity Framework 2.0"
+    url: "https://www.nist.gov/cyberframework"
+    type: html
+    selector: ".nist-page__content"
+    active: false
+    skip_classification: false
+    notes: >
+      EXCLUDED: not AI-specific — this was originally included as a non-AI
+      baseline to compare against the AI RMF, but the project scope
+      narrowed to track AI-specific regulatory movement only. Lesson
+      learned worth keeping: .nist-page__content was NOT reliably scoped to
+      just the article body on this page the way it was on the AI RMF page
+      — it also captured an unrelated "Resource Center" accordion menu.
+      Drupal template classes aren't guaranteed consistent page-to-page
+      even on the same site; always verify per-page.
+
+  - id: iso_27001
+    name: "ISO/IEC 27001:2022 (Information Security Management)"
+    url: "https://www.iso.org/standard/27001"
+    type: html
+    selector: "#content"
+    active: false
+    skip_classification: true
+    notes: >
+      EXCLUDED: not AI-specific — was the non-AI baseline paired with ISO
+      42001 above, dropped for the same scope-narrowing reason as NIST CSF.
+      Also worth noting: same iso.org domain as ISO 42001, so it likely sits
+      behind the same Cloudflare bot-detection wall — untested since it was
+      excluded on scope grounds before that was checked.

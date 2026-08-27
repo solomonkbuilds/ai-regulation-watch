@@ -36,9 +36,7 @@ regulatory changes over time.
 | Source | What it covers | Classified by Claude? |
 |---|---|---|
 | NIST AI Risk Management Framework | Voluntary US AI risk framework | Yes |
-| NIST Cybersecurity Framework 2.0 | Non-AI baseline, paired with the AI RMF | Yes |
 | ISO/IEC 42001:2023 | International AI management system standard | No — see below |
-| ISO/IEC 27001:2022 | Non-AI baseline, paired with 42001 | No — see below |
 
 Add or remove sources in `config/sources.yaml` — no code changes required for a standard HTML source.
 

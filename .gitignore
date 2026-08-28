@@ -1,0 +1,11 @@
+__pycache__/
+*.pyc
+.venv/
+venv/
+.env
+.streamlit/secrets.toml
+
+# Uncomment if you'd rather NOT commit the db via CI and instead treat it as
+# a build artifact — but note the Actions workflow currently commits it so
+# GitHub itself becomes the visible history of changes.
+# data/*.db

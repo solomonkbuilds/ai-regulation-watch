@@ -2,7 +2,7 @@
 
 ## Why evaluate at all
 
-The riskiest component in this pipeline isn't the scraping — it's the LLM
+The riskiest component in this pipeline isn't the scraping, it's the LLM
 classification step that decides whether a detected change is AI-relevant.
 Treating that decision as ground truth without checking it would be sloppy
 for the same reason it's sloppy in GRC generally: any control (automated or

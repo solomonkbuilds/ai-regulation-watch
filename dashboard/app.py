@@ -19,7 +19,7 @@ from src import storage  # noqa: E402
 
 st.set_page_config(page_title="AI Reg Watch", layout="wide")
 
-st.title("AI Reg Watch")
+st.title("AI Regulation Watch")
 st.caption("Tracking regulatory changes across standards, with AI-relevance classification")
 
 storage.init_db()
